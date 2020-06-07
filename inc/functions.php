@@ -21,3 +21,16 @@ function addEntry($title, $date, $time_spent, $learned, $resources){
     }
     return true;
 }
+
+function getEntries() {
+    include 'connection.php';
+
+    try {
+        $sql = "SELECT id, title, date FROM entries ORDER BY date DESC";
+        $results = $db->query($sql);
+    } catch (Exception $e) {
+        echo 'error: ' . $e->getMessage();
+    }
+
+    return $results->fetchAll(PDO::FETCH_ASSOC);
+}
