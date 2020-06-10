@@ -24,7 +24,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Please enter a valid date";
     } else {
         if (addEntry($title, $date, $time_spent, $learned, $resources)) {
-            header('Location: index.php?success=true');
+            header('Location: index.php?success=added');
         } else {
             $error_msg = 'Could not add entry';
         }
@@ -44,14 +44,7 @@ include ('vendor/autoload.php');
         <link rel="stylesheet" href="css/site.css">
     </head>
     <body>
-        <header>
-            <div class="container">
-                <div class="site-header">
-                    <a class="logo" href="index.php"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="new.php"><span>New Entry</span> <i class="material-icons">add</i></a>
-                </div>
-            </div>
-        </header>
+    <?php include 'header.php' ?>
         <section>
             <div class="container">
                 <div class="new-entry">
@@ -73,10 +66,6 @@ include ('vendor/autoload.php');
                 </div>
             </div>
         </section>
-        <footer>
-            <div>
-                &copy; MyJournal
-            </div>
-        </footer>
+        <?php include 'footer.php'; ?>
     </body>
 </html>
