@@ -4,11 +4,7 @@ include 'inc/functions.php';
 if(isset($_GET['success'])) {
     $msg_param = trim(filter_input(INPUT_GET, 'success', FILTER_SANITIZE_STRING));
 
-    if ($msg_param == 'updated') {
-        $success_msg = 'Item was successfully updated';
-    } elseif ($msg_param == 'added') {
-        $success_msg = 'Item was successfully added';
-    }
+    $success_msg = "Item was successfully $msg_param";
 }
 
 ?>

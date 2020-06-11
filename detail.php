@@ -12,6 +12,16 @@ if (isset($_GET['id'])) {
     }
 }
 
+if (isset($_POST['delete'])) {
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+    if(deleteEntry($id)) {
+        header('Location: index.php?success=deleted');
+    } else {
+        $error_msg = 'Unable to delete entry. Please try again. If the issue persists please contact support.';
+    }
+}
+
 ?>
 
 <html>
@@ -59,8 +69,9 @@ if (isset($_GET['id'])) {
             </div>
             <div class="edit">
                 <p><a href="edit.php?id=<?= $id ?>">Edit Entry</a></p>
-                <form method="post" action="edit.php">
-                    <input type="submit" value="Delete" class="delete"/>
+                <form method="post" action="detail.php">
+                    <input hidden value="<?= $id ?>" name="id">
+                    <input type="submit" value="Delete" class="delete" name="delete"/>
                 </form>
             </div>
         </section>

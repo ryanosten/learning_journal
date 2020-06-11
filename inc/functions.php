@@ -76,3 +76,18 @@ function editEntry($id, $title, $date, $time_spent, $learned, $resources) {
     return true;
 
 }
+
+function deleteEntry($id) {
+    include 'connection.php';
+
+    try {
+        $sql = 'DELETE FROM entries WHERE id = ?';
+        $results = $db->prepare($sql);
+        $results->bindValue(1, $id, PDO::PARAM_INT);
+        $results->execute();
+    } catch (Exception $e) {
+        echo 'error ' . $e->getMessage();
+    }
+
+    return true;
+}
