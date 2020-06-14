@@ -3,8 +3,10 @@
 
 include 'inc/functions.php';
 
-$title = $time_spent = $learned = $date = $resources = '';
+//vars for storing fields so they dont clear if error on submit
+$title = $time_spent = $learned = $date = $resources = $tags = '';
 
+//if request is GET, were going to call getEntryDetails with id and get the entry details. We store the details in $entry_details.
 if (isset($_GET['id'])) {
     $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -15,7 +17,9 @@ if (isset($_GET['id'])) {
     }
 }
 
+//if request method is POST, that means user wants to submit new edits to a record.
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //filter all keys on POST
     $id = trim(filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT));
     $title = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING));
     $date = trim(filter_input(INPUT_POST, 'date', FILTER_SANITIZE_STRING));
@@ -23,18 +27,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learned = trim(filter_input(INPUT_POST, 'learned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'resources', FILTER_SANITIZE_STRING));
 
+    //explode date into an array so that we can validate date
     $dateMatch = explode('-', $date);
 
-    if (empty($title) || empty($time_spent) || empty($learned) || empty($resources)) {
-        echo "Please complete all fields";
+    //check for required fields
+    if (empty($title) || empty($time_spent)) {
+        echo "Please complete all required fields";
+        //validate date by checking string length
     } elseif (count($dateMatch) != 3
         || strlen($dateMatch[0]) != 4
         || strlen($dateMatch[1]) != 2
         || strlen($dateMatch[2]) != 2
+        //use checkdate to validate that its a valid date
         || !checkdate($dateMatch[1], $dateMatch[2], $dateMatch[0])) {
         echo "Please enter a valid date";
     } else {
-        if (editEntry($id, $title, $date, $time_spent, $learned, $resources)) {
+        //if all is good, call editEntry to edit the entry record in database. Then redirect to index and pass a GET param to show toaster
+        if (editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)) {
             echo 'test';
             header('Location: index.php?success=updated');
         } else {
@@ -67,36 +76,56 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                     ?>
                     <h2>Edit Entry</h2>
-                    <form method="post" action="edit.php">
-                        <label for="title"> Title</label>
+                    <form method="post" action="edit.php?id=<?= $id ?>">
+                        <label for="title">Title*</label>
                         <input id="title" type="text" name="title" value="<?php
-                                if(isset($entry_details)){
-                                    echo $entry_details['title'];
-                            }?>"><br>
-                        <label for="date">Date</label>
+                            //these blocks display the entry details with given key. We first check if the request method is POST,
+                            //if so show value that was in field on submit, so we don't clear inputs for user.
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $title;
+                            } elseif (isset($entry_details)){
+                                echo $entry_details['title'];
+                            }
+                            ?>"><br>
+                        <label for="date">Date*</label>
                         <input id="date" type="date" name="date" value="<?php
-                                if(isset($entry_details)){
-                                    echo $entry_details['date'];
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $date;
+                            } elseif (isset($entry_details)){
+                                echo $entry_details['date'];
                             }?>"><br>
-                        <label for="time-spent"> Time Spent</label>
+                        <label for="time-spent">Time Spent*</label>
                         <input id="time-spent" type="text" name="time_spent" value="<?php
-                                if(isset($entry_details)){
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $time_spent;
+                            } elseif (isset($entry_details)){
                                 echo $entry_details['time_spent'];
                             }?>"><br>
                         <label for="what-i-learned">What I Learned</label>
                         <textarea id="what-i-learned" rows="5" name="learned"><?php
-                                if(isset($entry_details)){
-                                    echo $entry_details['learned'];
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $learned;
+                            } elseif (isset($entry_details)){
+                                echo $entry_details['learned'];
                             }?>
                         </textarea>
                         <label for="resources-to-remember">Resources to Remember</label>
                         <textarea id="resources-to-remember" rows="5" name="resources"><?php
-                                if(isset($entry_details)){
-                                    echo $entry_details['resources'];
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $resources;
+                            } elseif (isset($entry_details)){
+                                echo $entry_details['resources'];
                             }?>
                         </textarea>
+                        <label for="tags">Tags</label>
+                        <input id="tags" type="text" name="tags" value="<?php
+                            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                                echo $tags;
+                            } elseif (isset($entry_details)) {
+                                echo $entry_details['tags'];
+                            }?>"><br>
                         <input hidden name="id" value="<?= $id ?>">
-                        <input type="submit" value="Publish Entry" class="button">
+                        <br><input type="submit" value="Publish Entry" class="button">
                         <a href="#" class="button button-secondary">Cancel</a>
                     </form>
                 </div>

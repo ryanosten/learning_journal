@@ -55,14 +55,34 @@ if (isset($_POST['delete'])) {
                             <p><?= $entry_details['time_spent']?></p>
                         </div>
                         <div class="entry">
-                            <h3>What I Learned:</h3>
-                            <p><?= $entry_details['learned']?></p>
+                            <h3>Learned: </h3>
+                            <?php if(!empty($entry_details['learned'])) {
+                                echo "<p>{$entry_details['learned']}</p>";
+                            } else {
+                                echo "<p>None</p>";
+                            }
+                            ?>
                         </div>
                         <div class="entry">
                             <h3>Resources to Remember:</h3>
-                            <ul>
-                                <li><?= $entry_details['resources']?></li>
-                            </ul>
+                            <?php if(!empty($entry_details['resources'])) {
+                                echo "<ul>" .
+                                "<li>{$entry_details['resources']}</li>" .
+                                "</ul>";
+                            } else {
+                                echo "<p>None</p>";
+                            }
+                            ?>
+
+                        </div>
+                        <div class="entry">
+                            <h3>Tags:</h3>
+                            <?php if(!empty($entry_details['tags'])) {
+                                echo "<p>{$entry_details['tags']}</p>";
+                            } else {
+                                echo "<p>None</p>";
+                            }
+                            ?>
                         </div>
                     </article>
                 </div>
