@@ -1,7 +1,7 @@
 <?php
 include 'inc/functions.php';
 
-//conditional to check for success key on GET. If this is set, page will show success message as a toaster when an entry is added, deleted or edited.
+//conditional to check for success key on GET. If this key is set, page will show success message as a toaster when an entry is added, deleted or edited.
 if(isset($_GET['success'])) {
     $msg_param = trim(filter_input(INPUT_GET, 'success', FILTER_SANITIZE_STRING));
 

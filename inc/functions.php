@@ -1,7 +1,7 @@
 <?php
 
 
-
+//function to create new entries in database
 function addEntry($title, $date, $time_spent, $learned, $resources, $tags){
 
     include 'connection.php';
@@ -23,6 +23,7 @@ function addEntry($title, $date, $time_spent, $learned, $resources, $tags){
     return true;
 }
 
+//function to get all entries from the db
 function getEntries() {
     include 'connection.php';
 
@@ -36,6 +37,7 @@ function getEntries() {
     return $results->fetchAll(PDO::FETCH_ASSOC);
 }
 
+//function to get entry details for a single entry
 function getEntryDetails($id) {
     include 'connection.php';
 
@@ -51,12 +53,14 @@ function getEntryDetails($id) {
     return $results->fetch(PDO::FETCH_ASSOC);
 }
 
+//function to format the date from db yyyy-mm-dd to June 15, 2020 (for example)
 function convertDate($date) {
     $timestamp = strtotime($date);
     $formatted_time = date('F j, Y', $timestamp);
     return $formatted_time;
 }
 
+//function to edit an entry in db
 function editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags) {
     include 'connection.php';
 
@@ -79,6 +83,7 @@ function editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)
 
 }
 
+//function to delete an entry in db
 function deleteEntry($id) {
     include 'connection.php';
 

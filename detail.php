@@ -2,6 +2,7 @@
 
 include 'inc/functions.php';
 
+//if GET id key is set, call getEntryDetails to display the entry details
 if (isset($_GET['id'])) {
     $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -12,10 +13,11 @@ if (isset($_GET['id'])) {
     }
 }
 
+//if POST delete key is set, call deleteEntry to delete the entry record from db
 if (isset($_POST['delete'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-    
+
 
     if(deleteEntry($id)) {
         header('Location: index.php?success=deleted');
@@ -58,7 +60,9 @@ if (isset($_POST['delete'])) {
                         </div>
                         <div class="entry">
                             <h3>Learned: </h3>
-                            <?php if(!empty($entry_details['learned'])) {
+                            <?php
+                            //if $entry_details is set, show the 'learned' key value. We do this conditional bc learned is not a required field
+                            if(!empty($entry_details['learned'])) {
                                 echo "<p>{$entry_details['learned']}</p>";
                             } else {
                                 echo "<p>None</p>";
