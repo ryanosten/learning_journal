@@ -15,6 +15,8 @@ if (isset($_GET['id'])) {
 if (isset($_POST['delete'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
+    
+
     if(deleteEntry($id)) {
         header('Location: index.php?success=deleted');
     } else {

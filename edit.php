@@ -26,6 +26,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $time_spent= trim(filter_input(INPUT_POST, 'time_spent', FILTER_SANITIZE_STRING));
     $learned = trim(filter_input(INPUT_POST, 'learned', FILTER_SANITIZE_STRING));
     $resources = trim(filter_input(INPUT_POST, 'resources', FILTER_SANITIZE_STRING));
+    $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
     //explode date into an array so that we can validate date
     $dateMatch = explode('-', $date);
@@ -44,7 +45,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, call editEntry to edit the entry record in database. Then redirect to index and pass a GET param to show toaster
         if (editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)) {
-            echo 'test';
             header('Location: index.php?success=updated');
         } else {
             $error_msg = 'Could not update entry';
@@ -86,21 +86,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                             } elseif (isset($entry_details)){
                                 echo $entry_details['title'];
                             }
-                            ?>"><br>
+                            ?>" required><br>
                         <label for="date">Date*</label>
                         <input id="date" type="date" name="date" value="<?php
                             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo $date;
                             } elseif (isset($entry_details)){
                                 echo $entry_details['date'];
-                            }?>"><br>
+                            }?>" required><br>
                         <label for="time-spent">Time Spent*</label>
                         <input id="time-spent" type="text" name="time_spent" value="<?php
                             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo $time_spent;
                             } elseif (isset($entry_details)){
                                 echo $entry_details['time_spent'];
-                            }?>"><br>
+                            }?>" required><br>
                         <label for="what-i-learned">What I Learned</label>
                         <textarea id="what-i-learned" rows="5" name="learned"><?php
                             if ($_SERVER['REQUEST_METHOD'] == 'POST') {

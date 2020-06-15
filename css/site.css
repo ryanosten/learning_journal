@@ -122,11 +122,15 @@ p a {
 ul li {
 	line-height: 1.8em;
 	font-size: 18px;
+	list-style: none;
 }
 ul li a {
 	border-bottom: 2px solid #678f89;
 	line-height: 1.8em;
 	color: #678f89;
+}
+
+ul {
 	text-decoration: none;
 }
 

@@ -59,12 +59,11 @@ include ('vendor/autoload.php');
                     <h2>New Entry</h2>
                     <form method="post" action="new.php">
                         <label for="title"> Title*</label>
-                        //we use htmlspecialchars to escape user output. Also this makes it so values dont clear if there is error submitting form
                         <input id="title" type="text" name="title" value="<?= htmlspecialchars($title)?>" required><br>
                         <label for="date" >Date*</label>
                         <input id="date" type="date" name="date" value="<?= htmlspecialchars($date)?>" required><br>
                         <label for="time-spent">Time Spent*</label>
-                        <input id="time-spent" type="text" name="time_spent" value="<?= htmlspecialchars($time_spent)?>"><br>
+                        <input id="time-spent" type="text" name="time_spent" value="<?= htmlspecialchars($time_spent)?>" required><br>
                         <label for="what-i-learned">What I Learned</label>
                         <textarea id="what-i-learned" rows="5" name="learned"><?= htmlspecialchars($learned)?></textarea>
                         <label for="resources-to-remember">Resources to Remember</label>
