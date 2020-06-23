@@ -17,8 +17,6 @@ if (isset($_GET['id'])) {
 if (isset($_POST['delete'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-
-
     if(deleteEntry($id)) {
         header('Location: index.php?success=deleted');
     } else {
@@ -84,7 +82,14 @@ if (isset($_POST['delete'])) {
                         <div class="entry">
                             <h3>Tags:</h3>
                             <?php if(!empty($entry_details['tags'])) {
-                                echo "<p>{$entry_details['tags']}</p>";
+                                echo "<p>";
+                                foreach ($entry_details['tags'] as $key => $value) {
+                                    echo $value;
+                                    if($key + 1 < count($entry_details['tags'])) {
+                                        echo ', ';
+                                    }
+                                }
+                                echo "</p>";
                             } else {
                                 echo "<p>None</p>";
                             }

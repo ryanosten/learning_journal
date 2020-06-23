@@ -28,6 +28,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resources = trim(filter_input(INPUT_POST, 'resources', FILTER_SANITIZE_STRING));
     $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
+    //explode diff tags into an array to handle adding multiple tags on an entry
+    if (!empty($tags)) {
+        $tags = explode(',', $tags);
+
+        //remove all whitespace from array values
+        $tags = array_map('trim', $tags);
+
+        //if there is a trailing comma, an empty value will be created. This will remove it.
+        if (($key = array_search('', $tags)) !== false) {
+            unset($tags[$key]);
+        }
+    } else {
+        $tags = [];
+    }
+
     //explode date into an array so that we can validate date
     $dateMatch = explode('-', $date);
 
@@ -122,7 +137,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo $tags;
                             } elseif (isset($entry_details)) {
-                                echo $entry_details['tags'];
+                                if (!empty($entry_details['tags'])) {
+                                    foreach ($entry_details['tags'] as $key => $value) {
+                                        echo $value;
+                                        if($key + 1 < count($entry_details['tags'])) {
+                                            echo ', ';
+                                        }
+                                    }
+                                }
                             }?>"><br>
                         <input hidden name="id" value="<?= $id ?>">
                         <br><input type="submit" value="Publish Entry" class="button">

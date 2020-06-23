@@ -16,6 +16,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resources = trim(filter_input(INPUT_POST, 'resources', FILTER_SANITIZE_STRING));
     $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
+    //explode diff tags into an array to handle adding multiple tags on an entry
+    if (!empty($tags)) {
+        $tags = explode(',', $tags);
+
+        //remove all whitespace from array values
+        $tags = array_map('trim', $tags);
+
+        //if there is a trailing comma, an empty value will be created in array. This will remove it.
+        if (($key = array_search('', $tags)) !== false) {
+            unset($tags[$key]);
+        }
+    }
+
     //explode $date into an array so that we can validate it
     $dateMatch = explode('-', $date);
 
@@ -32,7 +45,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, we add the entry and redirect to index.php. We also set get param to success=added to display toaster
         if (addEntry($title, $date, $time_spent, $learned, $resources, $tags)) {
-            header('Location: index.php?success=added');
+           header('Location: index.php?success=added');
         } else {
             $error_msg = 'Could not add entry';
         }
@@ -69,7 +82,12 @@ include ('vendor/autoload.php');
                         <label for="resources-to-remember">Resources to Remember</label>
                         <textarea id="resources-to-remember" rows="5" name="resources"><?= htmlspecialchars($resources)?></textarea>
                         <label for="tags">tags</label>
-                        <input id="tags" type="text" name="tags" value="<?= htmlspecialchars($tags) ?>"><br>
+                        <input id="tags" type="text" name="tags" value="
+                            <?php
+                                if(!empty($tags)) {
+                                    echo htmlspecialchars(implode(',', $tags));
+                                }
+                            ?>"><br>
                         <input type="submit" value="Publish Entry" class="button">
                         <a href="#" class="button button-secondary">Cancel</a>
                     </form>
