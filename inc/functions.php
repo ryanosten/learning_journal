@@ -126,6 +126,7 @@ function deleteEntry($id) {
     return true;
 }
 
+//function to edit tags from the edit entry view
 function editTags($id, $tags) {
     include 'connection.php';
 
@@ -184,6 +185,7 @@ function editTags($id, $tags) {
     }
 }
 
+//function to add new tags
 function addTags($entry_id, $tags) {
     include 'connection.php';
 

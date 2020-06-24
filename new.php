@@ -89,7 +89,7 @@ include ('vendor/autoload.php');
                                 }
                             ?>"><br>
                         <input type="submit" value="Publish Entry" class="button">
-                        <a href="#" class="button button-secondary">Cancel</a>
+                        <a href="index.php" class="button button-secondary">Cancel</a>
                     </form>
                 </div>
             </div>
