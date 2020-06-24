@@ -28,14 +28,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resources = trim(filter_input(INPUT_POST, 'resources', FILTER_SANITIZE_STRING));
     $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
-    //explode diff tags into an array to handle adding multiple tags on an entry
+
     if (!empty($tags)) {
+        //explode diff tags into an array to handle adding multiple tags on an entry
         $tags = explode(',', $tags);
 
         //remove all whitespace from array values
         $tags = array_map('trim', $tags);
 
-        //if there is a trailing comma, an empty value will be created. This will remove it.
+        //if there is a trailing comma in $tags, an empty value will be created. This will remove it.
         if (($key = array_search('', $tags)) !== false) {
             unset($tags[$key]);
         }

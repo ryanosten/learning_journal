@@ -105,36 +105,6 @@ function editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)
         return false;
     }
 
-    if(!empty($tags)) {
-        foreach ($tags as $tag) {
-            //check if tag already exists
-            $tag = ltrim($tag);
-            try {
-                $sql = "SELECT tag_name FROM tags WHERE tag_name = ?";
-                $results = $db->prepare($sql);
-                $results->bindValue(1, $tag, PDO::PARAM_STR);
-                $results->execute();
-            } catch (Exception $e) {
-                echo "error: " . $e->getMessage();
-                return false;
-            }
-            //if the $results on fetch are empty, that means there is no duplicate existing in the tags table, so we can go ahead and create a record in tags table
-            if (empty($results->fetchAll(PDO::FETCH_ASSOC))) {
-                try {
-                    $sql = "INSERT INTO tags(tag_name) VALUES (?)";
-                    $results = $db->prepare($sql);
-                    $results->bindValue(1, $tag, PDO::PARAM_STR);
-                    $results->execute();
-                } catch (Exception $e) {
-                    echo "error: " . $e->getMessage();
-                    return false;
-                }
-            }
-        }
-        //locate all records in entry_tags_link table that have the relevant entry id, compare them to the $tags,
-        //and remove record if tag_id is not in $tags, add record if there is no tag_id entry_id association
-    }
-
     editTags($id, $tags);
 
     return true;
@@ -159,8 +129,9 @@ function deleteEntry($id) {
 function editTags($id, $tags) {
     include 'connection.php';
 
+    //retrieve the tag names from the tags table or the tags that are linked/associated with the entry id being edited
     try {
-        $sql= 'SELECT tags.tag_name, tags.tag_id FROM tags
+        $sql = 'SELECT tags.tag_name, tags.tag_id FROM tags
                   JOIN entry_tags_link ON entry_tags_link.tag_id = tags.tag_id
                   WHERE entry_tags_link.entry_id = ?';
         $results = $db->prepare($sql);
@@ -170,35 +141,14 @@ function editTags($id, $tags) {
         echo "error: " . $e->getMessage();
         return false;
     }
+    //loop through the results
+    $linked_items = $results->fetchAll(PDO::FETCH_ASSOC);
 
-
-//    while($row = $results->fetch(PDO::FETCH_ASSOC)) {
-//        $tag_name = $row['tag_name'];
-//        $tag_id = $row['tag_id'];
-//
-//        //check if tag_name from query is in $tags that were submitted by user on edit entry form, if not then the user deleted
-//        // it from tags input in form, so go ahead and delete the tag from entry_links_table
-//        if(!in_array($tag_name, $tags) OR empty($tags)) {
-//            try {
-//                $sql = 'DELETE FROM entry_tags_link
-//                          WHERE tag_id = ?';
-//                $results = $db->prepare($sql);
-//                $results->bindValue(1, $tag_id, PDO::PARAM_INT);
-//                $results->execute();
-//            } catch (Exception $e) {
-//                echo "error: " . $e->getMessage();
-//                return false;
-//            }
-//        }
-//
-//    }
-
-    $results = $results->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($results as $row) {
+    foreach ($linked_items as $row) {
         $tag_name = $row['tag_name'];
         $tag_id = $row['tag_id'];
 
-        //check if tag_name from query is in $tags that were submitted by user on edit entry form, if not then the user deleted
+        //check if tag_name from the query results is in $tags that were submitted by user on edit entry form, if not then this means that the user deleted
         // it from tags input in form, so go ahead and delete the tag from entry_links_table
         if (!in_array($tag_name, $tags) OR empty($tags)) {
             try {
@@ -214,23 +164,31 @@ function editTags($id, $tags) {
         }
     }
 
-
-    //OK TIME TO ADD TAGS now we need to check if a tag from $tags is not in the entry_links
-//    if(!empty($tags)) {
-//        foreach ($tags as $tag) {
-//            if(!in_array($tag, $entry_tags)) {
-//                addTags($id, $tags);
-//            }
-//        }
-//    }
+//    OK its time to handle adding tags through the edit from. Now we need to check if a tag from $tags is not in the entry_links table which would mean the user added it in the input
+//    first lets put the results from the query to entry_links in an single-dimensional array (bc we need to check this array)
+    if (!empty($tags)) {
+            $input_tags = [];
+            foreach ($linked_items as $item) {
+                $input_tags[] = $item['tag_name'];
+            }
+//  now we loops through the $tags that were input by user
+        foreach ($tags as $tag) {
+            //check if a given $tag from user is present in the entry_tags_link table for the given entry $id. If its not in the array, that means its new and we need to add it so we
+            //call addTags
+            if (!in_array($tag, $input_tags)) {
+                //put $tag into array bc addTags takes an array as argument
+                $tag_arr = [$tag];
+                addTags($id, $tag_arr);
+            }
+        }
+    }
 }
 
 function addTags($entry_id, $tags) {
     include 'connection.php';
 
     foreach ($tags as $tag) {
-        //check if tag already exists
-        $tag = ltrim($tag);
+        //check if tag already exists in tags table
         try {
             $sql = "SELECT tag_name FROM tags WHERE tag_name = ?";
             $results = $db->prepare($sql);
@@ -252,6 +210,7 @@ function addTags($entry_id, $tags) {
                 return false;
             }
         }
+
         //add to the entry_tags_link table
         try {
             //get the tag id
