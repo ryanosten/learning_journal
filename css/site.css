@@ -146,6 +146,14 @@ input.delete {
 	font-size: 14px;
 }
 
+.tags {
+	display: inline-block;
+	background-color: dimgrey;
+	margin: 0 2px;
+	padding: 2px 4px;
+	color: white;
+	border-radius: 1px;
+}
 
 
 /* ==========================================================================

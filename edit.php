@@ -2,6 +2,7 @@
 <?php
 
 include 'inc/functions.php';
+session_start();
 
 //vars for storing fields so they dont clear if error on submit
 $title = $time_spent = $learned = $date = $resources = $tags = '';
@@ -29,20 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
 
-    if (!empty($tags)) {
-        //explode diff tags into an array to handle adding multiple tags on an entry
-        $tags = explode(',', $tags);
-
-        //remove all whitespace from array values
-        $tags = array_map('trim', $tags);
-
-        //if there is a trailing comma in $tags, an empty value will be created. This will remove it.
-        if (($key = array_search('', $tags)) !== false) {
-            unset($tags[$key]);
-        }
-    } else {
-        $tags = [];
-    }
+    $tags = convertTagsToArray($tags);
 
     //explode date into an array so that we can validate date
     $dateMatch = explode('-', $date);
@@ -61,6 +49,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, call editEntry to edit the entry record in database. Then redirect to index and pass a GET param to show toaster
         if (editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)) {
+            $_SESSION['show_msg'] = 1;
             header('Location: index.php?success=updated');
         } else {
             $error_msg = 'Could not update entry';
@@ -133,7 +122,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo $entry_details['resources'];
                             }?>
                         </textarea>
-                        <label for="tags">Tags</label>
+                        <label for="tags">Tags (separate your tags with commas)</label>
                         <input id="tags" type="text" name="tags" value="<?php
                             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo $tags;

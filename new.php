@@ -2,6 +2,7 @@
 <?php
 
 include ('inc/functions.php');
+session_start();
 
 //variables to store values to ensure we don't clear values from page inputs in the event that creation of record in db is not successful
 $title = $time_spent = $learned = $date = $resources = $tags = '';
@@ -17,17 +18,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tags = trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING));
 
     //explode diff tags into an array to handle adding multiple tags on an entry
-    if (!empty($tags)) {
-        $tags = explode(',', $tags);
-
-        //remove all whitespace from array values
-        $tags = array_map('trim', $tags);
-
-        //if there is a trailing comma, an empty value will be created in array. This will remove it.
-        if (($key = array_search('', $tags)) !== false) {
-            unset($tags[$key]);
-        }
-    }
+    $tags = convertTagsToArray($tags);
 
     //explode $date into an array so that we can validate it
     $dateMatch = explode('-', $date);
@@ -45,7 +36,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, we add the entry and redirect to index.php. We also set get param to success=added to display toaster
         if (addEntry($title, $date, $time_spent, $learned, $resources, $tags)) {
-           header('Location: index.php?success=added');
+            $_SESSION['show_msg'] = 1;
+            header('Location: index.php?success=added');
         } else {
             $error_msg = 'Could not add entry';
         }
@@ -81,7 +73,7 @@ include ('vendor/autoload.php');
                         <textarea id="what-i-learned" rows="5" name="learned"><?= htmlspecialchars($learned)?></textarea>
                         <label for="resources-to-remember">Resources to Remember</label>
                         <textarea id="resources-to-remember" rows="5" name="resources"><?= htmlspecialchars($resources)?></textarea>
-                        <label for="tags">tags</label>
+                        <label for="tags">Tags (separate your tags with commas)</label>
                         <input id="tags" type="text" name="tags" value="
                             <?php
                                 if(!empty($tags)) {
