@@ -49,7 +49,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, call editEntry to edit the entry record in database. Then redirect to index and pass a GET param to show toaster
         if (editEntry($id, $title, $date, $time_spent, $learned, $resources, $tags)) {
-            $_SESSION['show_msg'] = 1;
+            $_SESSION['show_msg'] = TRUE;
             header('Location: index.php?success=updated');
         } else {
             $error_msg = 'Could not update entry';

@@ -5,11 +5,11 @@ session_start();
 //conditional to check for success key on GET. If this key is set,
 // page will show success message as a toaster when an entry is added, deleted or edited.
 //check for $_SESSION is to prevent success toast from firing when browser back button is clicked to get to index.php
-if(isset($_GET['success']) && $_SESSION['show_msg'] == 1) {
+if(isset($_GET['success']) && $_SESSION['show_msg']) {
     $msg_param = trim(filter_input(INPUT_GET, 'success', FILTER_SANITIZE_STRING));
 
     $success_msg = "Item was successfully $msg_param";
-    $_SESSION['show_msg']=0;
+    $_SESSION['show_msg'] = FALSE;
 }
 ?>
 

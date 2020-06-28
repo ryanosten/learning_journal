@@ -36,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         //if all is good, we add the entry and redirect to index.php. We also set get param to success=added to display toaster
         if (addEntry($title, $date, $time_spent, $learned, $resources, $tags)) {
-            $_SESSION['show_msg'] = 1;
+            $_SESSION['show_msg'] = TRUE;
             header('Location: index.php?success=added');
         } else {
             $error_msg = 'Could not add entry';

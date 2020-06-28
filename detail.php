@@ -19,7 +19,7 @@ if (isset($_POST['delete'])) {
     $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     if(deleteEntry($id)) {
-        $_SESSION['show_msg'] = 1;
+        $_SESSION['show_msg'] = TRUE;
         header('Location: index.php?success=deleted');
     } else {
         $error_msg = 'Unable to delete entry. Please try again. If the issue persists please contact support.';
